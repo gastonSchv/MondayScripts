@@ -3,19 +3,12 @@ const PivotalApi = require('../ScriptsApis/PivotalApi.js');
 const PivotalStory = require('../ScriptsApis/PivotalStory.js');
 const pivotalConfig = require('../Config/pivotalConfig.js')
 const mondayConfig = require('../Config/mondayConfig.js')
-const moment = require('moment');
 const _ = require('lodash');
 const Promise = require('bluebird')
 
 const monday = new MondayApi(mondayConfig.productBoardId);
 const pivotal = new PivotalApi(pivotalConfig.parsimotionProjectId) 
 
-const getTwoMonthPivotalStories = () => {
-  const twoMonthAgo = moment().subtract(2,'month').format('MM/DD/YYYY');
-  const today = moment().format('MM/DD/YYYY');
-
-  return pivotal.getStoriesFromPeriod(twoMonthAgo,today)
-}
 const filteredMondayRelatedStories = (pivotalStories,mondayItems) => {
   return pivotalStories.filter(pivotalStory => new PivotalStory(pivotalStory).isMondayStory(mondayItems))
 }
@@ -43,7 +36,7 @@ const updateMondayStories = formattedStories => {
 }
 const executeUpdate = () => {
   return Promise.props({
-    twoMonthPivotalStories: getTwoMonthPivotalStories(),
+    twoMonthPivotalStories: pivotal.getNMonthStories(2),
     sprintAndTerminadoItems: monday.getSprintAndTerminadoItems()
   })
   .then(({twoMonthPivotalStories,sprintAndTerminadoItems}) => {
