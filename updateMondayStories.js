@@ -6,6 +6,7 @@ const mondayConfig = require('../Config/mondayConfig.js')
 const _ = require('lodash');
 const Promise = require('bluebird')
 
+let index = 0
 const monday = new MondayApi(mondayConfig.productBoardId);
 const pivotal = new PivotalApi(pivotalConfig.parsimotionProjectId) 
 
@@ -22,13 +23,14 @@ const formatStory = (pivotalStory,mondayItems) => {
       }
     }
   }
-  catch {return}
+  catch(err){console.log(err)}
 }
 const formatedStories = (pivotalStories,mondayItems) => {
   return pivotalStories.map(pivotalStory => formatStory(pivotalStory,mondayItems)).filter(Boolean)
 } 
 const updateMondayStory = ({item_id,columns:{status,texto0}}) => {
   return monday.changeStatusAndSp(item_id,status,texto0)
+  .then(() => {index++;console.log(index,item_id)})//eliminar
   .catch(err => console.log(err))
 }
 const updateMondayStories = formattedStories => {
