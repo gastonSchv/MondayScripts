@@ -11,13 +11,30 @@ const Promise = require('bluebird')
 const monday = new MondayApi(mondayConfig.productBoardId);
 const pivotal = new PivotalApi(pivotalConfig.parsimotionProjectId) 
 
-const creatableStories = (pivotalStories,mondayItems) => {
-  return _.filter(pivotal.notIceboxedStories(pivotalStories),story => ! new PivotalStory(story).isMondayStory(mondayItems))
+const creatableStories = (pivotalStories,pivotalEpics,mondayItems) => {
+  const __filterCreatable = () => {
+    return _(pivotal.notIceboxedStories(pivotalStories))
+      .filter(notIceboxedStory => ! new PivotalStory(notIceboxedStory).isMondayStory(mondayItems))
+      .filter(isMondayStory => pivotal.isEpicStory(isMondayStory,pivotalEpics))
+      .value()
+  }
+  const __editNameIfEpic = creatableStories => {
+    return creatableStories.map(creatableStory => pivotal.changeNameIfEpic(creatableStory,pivotalEpics))
+  }
+  return __editNameIfEpic(__filterCreatable())
 } 
-const createUncreatedEpicStories = () => {
+const createEpicStories = () => { 
   return Promise.props({
-    pivotalStories: pivotal.getNMonthEpicStories(1),
-    mondayItems: monday.getAllItems()
+    pivotalStories: pivotal.getNMonthStories(2),
+    pivotalEpics: pivotal.getEpics(),
+    mondayItems: monday.getAllItems()    
   })
-  .then(({pivotalStories,mondayItems}) => creatableStories(pivotalStories,mondayItems))
+  .then(({pivotalStories,pivotalEpics,mondayItems}) => creatableStories(pivotalStories,pivotalEpics,mondayItems))
+  .then(creatableStories => monday.createItems({
+    pivotalStories:creatableStories,
+    groupName:'PivotalBasket'     
+    }))
+  .catch(err => console.log(err))//agregar un then que toma la response y verifique si hubo errores
 }
+
+createEpicStories()
