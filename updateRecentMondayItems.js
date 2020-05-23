@@ -5,13 +5,11 @@ const pivotalConfig = require('../Config/pivotalConfig.js')
 const mondayConfig = require('../Config/mondayConfig.js')
 const _ = require('lodash');
 const Promise = require('bluebird')
+const utils = require('./utils.js')
 
 const monday = new MondayApi(mondayConfig.productBoardId);
 const pivotal = new PivotalApi(pivotalConfig.parsimotionProjectId) 
 
-const filteredMondayRelatedStories = (pivotalStories,mondayItems) => {
-  return pivotalStories.filter(pivotalStory => new PivotalStory(pivotalStory).isMondayStory(mondayItems))
-}
 const formatStory = (pivotalStory,mondayItems) => {
   try {
     return {
@@ -36,11 +34,11 @@ const updateMondayStories = formattedStories => {
 }
 const executeUpdate = () => {
   return Promise.props({
-    twoMonthPivotalStories: pivotal.getNMonthStories(5),
+    twoMonthPivotalStories: pivotal.getNMonthStories(3),
     updateableItems: monday.getUpdateableGroupsItems()
   })
   .then(({twoMonthPivotalStories,updateableItems}) => {  
-    return formatedStories(filteredMondayRelatedStories(twoMonthPivotalStories,updateableItems),updateableItems)
+    return formatedStories(utils.filteredMondayRelatedStories(twoMonthPivotalStories,updateableItems),updateableItems)
     }
   )
   .then(updateMondayStories)
