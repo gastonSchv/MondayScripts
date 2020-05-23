@@ -24,7 +24,7 @@ const createEpicStories = () => {
   .then(({pivotalStories,pivotalEpics,mondayItems}) => utils.creatableStories({pivotalStories,pivotalEpics,mondayItems,filterFunction}))
   .then(creatableStories => monday.createItems({
     pivotalStories:creatableStories,
-    groupName:'PivotalBasket'     
+    groupName:'Pivotal Basket'     
     }))
   .catch(err => console.log(err))
 }
