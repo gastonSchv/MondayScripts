@@ -27,14 +27,14 @@ const formatedStories = (pivotalStories,mondayItems) => {
 } 
 const updateMondayStory = ({item_id,columns:{status,texto0}}) => {
   return monday.changeStatusAndSp(item_id,status,texto0)
-  .catch(err => console.log(err))
+  .catch(err => console.log(err.config))
 }
 const updateMondayStories = formattedStories => {
   return Promise.map(formattedStories,updateMondayStory,{concurrency:10})
 }
 const executeUpdate = () => {
   return Promise.props({
-    twoMonthPivotalStories: pivotal.getNMonthStories(3),
+    twoMonthPivotalStories: pivotal.getNMonthStories(4),
     updateableItems: monday.getUpdateableGroupsItems()
   })
   .then(({twoMonthPivotalStories,updateableItems}) => {  
