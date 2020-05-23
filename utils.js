@@ -35,6 +35,9 @@ class Utils {
 
     return __editNameIfEpic(__creatableStories())
   }
+  filteredMondayRelatedStories(pivotalStories,mondayItems){
+    return pivotalStories.filter(pivotalStory => new PivotalStory(pivotalStory).isMondayStory(mondayItems))
+  }
 }
 
 module.exports = new Utils
