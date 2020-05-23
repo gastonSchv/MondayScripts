@@ -26,7 +26,7 @@ const createEpicStories = () => {
     pivotalStories:creatableStories,
     groupName:'PivotalBasket'     
     }))
-  .catch(err => console.log(err))//agregar un then que toma la response y verifique si hubo errores
+  .catch(err => console.log(err))
 }
 
 createEpicStories()
