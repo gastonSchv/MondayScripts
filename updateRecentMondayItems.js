@@ -36,11 +36,11 @@ const updateMondayStories = formattedStories => {
 }
 const executeUpdate = () => {
   return Promise.props({
-    twoMonthPivotalStories: pivotal.getNMonthStories(2),
-    sprintAndTerminadoItems: monday.getSprintAndTerminadoItems()
+    twoMonthPivotalStories: pivotal.getNMonthStories(5),
+    updateableItems: monday.getUpdateableItems()
   })
-  .then(({twoMonthPivotalStories,sprintAndTerminadoItems}) => {
-    return formatedStories(filteredMondayRelatedStories(twoMonthPivotalStories,sprintAndTerminadoItems),sprintAndTerminadoItems)
+  .then(({twoMonthPivotalStories,updateableItems}) => {  
+    return formatedStories(filteredMondayRelatedStories(twoMonthPivotalStories,updateableItems),updateableItems)
     }
   )
   .then(updateMondayStories)
