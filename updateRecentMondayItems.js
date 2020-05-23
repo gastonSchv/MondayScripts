@@ -37,7 +37,7 @@ const updateMondayStories = formattedStories => {
 const executeUpdate = () => {
   return Promise.props({
     twoMonthPivotalStories: pivotal.getNMonthStories(5),
-    updateableItems: monday.getUpdateableItems()
+    updateableItems: monday.getUpdateableGroupsItems()
   })
   .then(({twoMonthPivotalStories,updateableItems}) => {  
     return formatedStories(filteredMondayRelatedStories(twoMonthPivotalStories,updateableItems),updateableItems)
