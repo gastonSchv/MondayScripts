@@ -13,18 +13,19 @@ const pivotal = new PivotalApi(pivotalConfig.parsimotionProjectId)
 
 
 class Utils {
-  filterDefaultCreatableStories(pivotalStories,mondayItems){
-    return _(pivotal.notIceboxedStories(pivotalStories))
-    .filter(notIceboxedStory => ! new PivotalStory(notIceboxedStory).isMondayStory(mondayItems))
-    .value()
+  filteredMondayRelatedStories(pivotalStories,mondayItems){
+    return pivotalStories.filter(pivotalStory => new PivotalStory(pivotalStory).isMondayStory(mondayItems))
   }
-  creatableStories({pivotalStories,pivotalEpics,mondayItems,filterFunction}) {
-    const __filterDefaultCreatable = () => {
-      return this.filterDefaultCreatableStories(pivotalStories,mondayItems)
-    }
+  filteredMondayUnrelatedStories(pivotalStories,mondayItems){
+    return pivotalStories.filter(pivotalStory => !new PivotalStory(pivotalStory).isMondayStory(mondayItems))
+  }
+  filterDefaultCreatableStories(pivotalStories,mondayItems){
+    return  this.filteredMondayUnrelatedStories(pivotal.notIceboxedStories(pivotalStories),mondayItems)
+  }
+  creatableStories({pivotalStories,pivotalEpics,mondayItems,filterFunction}) { 
     const __creatableStories = () => {
       return filterFunction({
-        pivotalStories:__filterDefaultCreatable(),
+        pivotalStories:this.filterDefaultCreatableStories(pivotalStories,mondayItems),
         pivotalEpics,
         mondayItems     
       })
@@ -32,11 +33,7 @@ class Utils {
     const __editNameIfEpic = creatableStories => {
       return creatableStories.map(creatableStory => pivotal.changeNameIfEpic(creatableStory,pivotalEpics))
     }
-
     return __editNameIfEpic(__creatableStories())
-  }
-  filteredMondayRelatedStories(pivotalStories,mondayItems){
-    return pivotalStories.filter(pivotalStory => new PivotalStory(pivotalStory).isMondayStory(mondayItems))
   }
 }
 
