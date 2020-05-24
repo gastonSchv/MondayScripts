@@ -18,7 +18,7 @@ const createStoriesFromEpic = (epicName) => {
   return _.filter(pivotalStories, pivotalStory =>  new PivotalStory(pivotalStory).hasLabel(epicName))
 } 
   return Promise.props({
-    pivotalStories: pivotal.getNMonthStories(1),
+    pivotalStories: pivotal.getNMonthStories(3),
     pivotalEpics: pivotal.getEpics(),
     mondayItems: monday.getAllItems()    
   })
@@ -34,4 +34,4 @@ const createStoriesFromEpic = (epicName) => {
   .catch(err => console.log(err))
 }
 
-createStoriesFromEpic('seleccion cuando hay multiples invoicers')
+createStoriesFromEpic('')
