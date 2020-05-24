@@ -18,16 +18,20 @@ const createStoriesFromEpic = (epicName) => {
   return _.filter(pivotalStories, pivotalStory =>  new PivotalStory(pivotalStory).hasLabel(epicName))
 } 
   return Promise.props({
-    pivotalStories: pivotal.getNMonthStories(5),
+    pivotalStories: pivotal.getNMonthStories(1),
     pivotalEpics: pivotal.getEpics(),
     mondayItems: monday.getAllItems()    
   })
-  .then(({pivotalStories,pivotalEpics,mondayItems}) => utils.creatableStories({pivotalStories,pivotalEpics,mondayItems,filterFunction}))
-  .then(creatableStories => monday.createItems({
+  .then(({pivotalStories,pivotalEpics,mondayItems}) => Promise.props ({
+    creatableStories: utils.creatableStories({pivotalStories,pivotalEpics,mondayItems,filterFunction}),
+    mondayItems :mondayItems
+  }))
+  .then(({creatableStories,mondayItems}) => monday.createItems({
     pivotalStories:creatableStories,
-    groupName:'Pivotal Basket'     
+    groupName:'Pivotal Basket',
+    mondayItems     
     }))
   .catch(err => console.log(err))
 }
 
-createStoriesFromEpic()
+createStoriesFromEpic('seleccion cuando hay multiples invoicers')
