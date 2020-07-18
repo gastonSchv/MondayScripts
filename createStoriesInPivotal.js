@@ -13,9 +13,7 @@ const filterCraetableItems = ({items,stories}) => {
 		return mapValue(column_values,"status") == "Lista Para Pivotal" && mapSpValue(column_values) !== ""
 	}
 	const __isNotInPivotal = (item,stories) => {
-		return !_.some(stories,story => {
-			return story.isThisMondayStory(item)
-		})
+		return !_.some(stories,story => story.isThisMondayStory(item))
 	}	
 	return _(items)
 	.filter(item => __isListoAndHasSp(item))
@@ -50,7 +48,7 @@ const create = stories => {
 }
 const createStories = () => {
 	return Promise.props({
-		items: monday.getGroupsItems(['Sprint actual'],),
+		items: monday.getGroupsItems(['Sprint actual']),
 		stories: pivotal.getNMonthInstancedStories(4)
 	})
 	.then(filterCraetableItems)

@@ -9,7 +9,7 @@ const Promise = require('bluebird')
 
 const monday = new MondayApi(mondayConfig.productBoardId);
 const pivotal = new PivotalApi(pivotalConfig.parsimotionProjectId) 
-
+const epicName = 'Glamit';
 
 const createStoriesFromEpic = (epicName) => { 
   const filterFunction = ({pivotalStories,pivotalEpics,mondayItems}) => {
@@ -32,4 +32,4 @@ const createStoriesFromEpic = (epicName) => {
   .catch(err => console.log(err))
 }
 
-createStoriesFromEpic('')
+createStoriesFromEpic(epicName)
