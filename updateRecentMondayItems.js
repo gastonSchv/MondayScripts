@@ -32,10 +32,13 @@ const updateMondayStory = ({item_id,columns:{status,texto0}}) => {
 const updateMondayStories = formattedStories => {
   return Promise.map(formattedStories,updateMondayStory,{concurrency:10})
 }
+const filterEnEspera = items => {
+	return _.filter(items, ({column_values}) => _.isUndefined(_.find(column_values,{text:'En Espera'})))
+}
 const executeUpdate = () => {
   return Promise.props({
     twoMonthPivotalStories: pivotal.getNMonthStories(2),
-    updateableItems: monday.getUpdateableGroupsItems()
+    updateableItems: monday.getUpdateableGroupsItems().then(filterEnEspera)
   })
   .then(({twoMonthPivotalStories,updateableItems}) => {  
     return formatedStories(utils.filteredMondayRelatedStories(twoMonthPivotalStories,updateableItems),updateableItems)
@@ -45,4 +48,4 @@ const executeUpdate = () => {
   .catch(err => console.log(err))
 }
 
-executeUpdate()
+module.exports = executeUpdate

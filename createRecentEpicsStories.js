@@ -31,4 +31,4 @@ const createEpicStories = () => {
 }
 
 
-createEpicStories()
+module.exports = createEpicStories

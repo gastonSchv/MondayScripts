@@ -57,4 +57,4 @@ const createStories = () => {
 	.then(create)
 }
 
-createStories()
+module.exports = createStories
