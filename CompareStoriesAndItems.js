@@ -11,22 +11,29 @@ let index = 0
 const compare = (amountOfMonth = 2) => {
   return Promise.props({
     pivotalStories: pivotal.getNMonthStories(amountOfMonth),
-    mondayItems: monday.getGroupsItems(['Sprint actual'])
+    allPivotalStories: pivotal.getNMonthStories(amountOfMonth+6),
+    mondayItems: monday.getGroupsItems(['Sprint actual']),
+    allMondayItems: monday.getAllItems()
   })
-  .then(({pivotalStories,mondayItems}) => {
+  .then(({pivotalStories,allPivotalStories,mondayItems,allMondayItems}) => {
     const __pivotalAndMonday = pivotalNotMonday => {
         return _.difference(pivotalStories,pivotalNotMonday)
     }
-    const __itemsIdsInPivotalStories = pivotalAndMonday => {
-      return _.map(pivotalAndMonday, pivotalStory => {
-        return new PivotalStory(pivotalStory).getMondayItemId(mondayItems)
+    const __itemsIdsInPivotalStories = allPivotalStories => {
+      return _(allPivotalStories) 
+      .map(pivotalStory => {
+        try {
+          return new PivotalStory(pivotalStory).getMondayItemId(allMondayItems)
+        }catch(err){return ''}
       })
+      .compact()
+      .value()
     }
     var pivotalNotMonday = _.filter(pivotalStories, pivotalStory => {
-      return !new PivotalStory(pivotalStory).isMondayStory(mondayItems)
+      return !new PivotalStory(pivotalStory).isMondayStory(allMondayItems)
     })
     var pivotalAndMonday = __pivotalAndMonday(pivotalNotMonday)
-    var itemsIdsInPivotalStories = __itemsIdsInPivotalStories(pivotalAndMonday) 
+    var itemsIdsInPivotalStories = __itemsIdsInPivotalStories(allPivotalStories) 
     var mondaySprintAndPivotal = _.filter(mondayItems,mondayItem => {
       return _.some(itemsIdsInPivotalStories, id => id == mondayItem.id)  
     })
@@ -39,18 +46,18 @@ const compare = (amountOfMonth = 2) => {
     }
   })
   .then(({pivotalTot,mondaySprintTot,pivotalNotMonday,pivotalAndMonday,mondaySprintAndPivotal}) => {
-    const __console = (name,log,divider) => {
-      const loger = divider? `\n${name} : ${log} || ${_.round(log/divider,3)*100}%` : `\n${name} : ${log}`
+      const __console = (name,log,divider) => {
+      const loger = divider? `\n${name} : ${log} || ${_.round((log/divider)*100,1)}%` : `\n${name} : ${log}`
       console.log(loger)
     }
-    __console('Amount Of Month',amountOfMonth)
+    __console('\n\nAmount Of Month',amountOfMonth)
     __console('pivotalTot',pivotalTot)
     __console('pivotalNotMonday', pivotalNotMonday.length,pivotalTot)
     __console('pivotalAndMonday', pivotalAndMonday.length,pivotalTot)
     __console('mondaySprintTot',mondaySprintTot)
     __console('mondaySprintAndPivotal',mondaySprintAndPivotal.length,mondaySprintTot)
-  })//work in progres
-
+  })
 }
 
-compare(1)
+module.exports = compare
+

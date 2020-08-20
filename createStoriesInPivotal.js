@@ -4,6 +4,7 @@ const PivotalApi = require('../ScriptsApis/PivotalApi.js')
 const Promise = require('bluebird')
 const _ = require('lodash')
 const config = require('../Config/mondayConfig.js')
+const moment = require('moment')
 
 const monday = new Monday();
 const pivotal = new PivotalApi()
@@ -26,13 +27,19 @@ const mapValue = (column_values,id) => {
 const  mapSpValue = column_values => {
 	return mapValue(column_values,"texto0")
 }
+const  mapExpectedDateValue = column_values => {
+	const __date = () =>{
+		return moment(mapValue(column_values,"fecha0")).format("MMMM/DD")
+	}
+	return _.includes(__date(),'Invalid')?'':`${__date()} - `
+}
 const mapTypeValue = column_values => {
 	return _.get(config.TYPES_MAPPING,mapValue(column_values,'estado7'),"")
 }
 const itemsToStoryFormat = items => {
 	return _.map(items, ({id,name,column_values}) => {
 		return {
-			name : `[Monday Created] ${name}`,
+			name : `[Monday Created] ${mapExpectedDateValue(column_values)} ${name}`,
 			description:`https://producteca.monday.com/boards/427697446/pulses/${id}`,
 			story_type: mapTypeValue(column_values),
 			current_state: 'unStarted',
@@ -54,7 +61,8 @@ const createStories = () => {
 	.then(filterCraetableItems)
 	.then(itemsToStoryFormat)
 	.tap(console.log)
-	.then(create)
+	//.then(create)
 }
+//module.exports = createStories
 
-module.exports = createStories
+createStories()
