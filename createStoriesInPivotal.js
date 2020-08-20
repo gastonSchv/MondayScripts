@@ -29,7 +29,7 @@ const  mapSpValue = column_values => {
 }
 const  mapExpectedDateValue = column_values => {
 	const __date = () =>{
-		return moment(mapValue(column_values,"fecha0")).format("MMMM/DD")
+		return moment(mapValue(column_values,"fecha0")).format("DD MMM")
 	}
 	return _.includes(__date(),'Invalid')?'':`${__date()} - `
 }
