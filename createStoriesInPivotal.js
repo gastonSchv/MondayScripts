@@ -61,8 +61,6 @@ const createStories = () => {
 	.then(filterCraetableItems)
 	.then(itemsToStoryFormat)
 	.tap(console.log)
-	//.then(create)
+	.then(create)
 }
-//module.exports = createStories
-
-createStories()
+module.exports = createStories

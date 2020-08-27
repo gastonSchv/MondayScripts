@@ -20,7 +20,7 @@ const formatStory = (pivotalStory,mondayItems) => {
       }
     }
   }
-  catch {return}
+  catch(e){return}
 }
 const formatedStories = (pivotalStories,mondayItems) => {
   return pivotalStories.map(pivotalStory => formatStory(pivotalStory,mondayItems)).filter(Boolean)

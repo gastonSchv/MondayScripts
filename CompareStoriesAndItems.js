@@ -8,6 +8,10 @@ const pivotal = new PivotalApi();
 const monday = new MondayApi();
 let index = 0 
 
+const __mondayItems = mondayItems => {
+	return _.filter(mondayItems,({name}) => !(/dummy|dumy/gi.test(name)))
+}
+
 const compare = (amountOfMonth = 2) => {
   return Promise.props({
     pivotalStories: pivotal.getNMonthStories(amountOfMonth),
@@ -39,7 +43,7 @@ const compare = (amountOfMonth = 2) => {
     })
     return {
       pivotalTot: pivotalStories.length,
-      mondaySprintTot: mondayItems.length,
+      mondaySprintTot: __mondayItems(mondayItems).length,
       pivotalNotMonday,
       pivotalAndMonday,
       mondaySprintAndPivotal
@@ -60,4 +64,4 @@ const compare = (amountOfMonth = 2) => {
 }
 
 module.exports = compare
-
+compare(1)
