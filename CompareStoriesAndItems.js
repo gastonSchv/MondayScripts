@@ -64,4 +64,3 @@ const compare = (amountOfMonth = 2) => {
 }
 
 module.exports = compare
-compare(1)
